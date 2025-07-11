@@ -18,7 +18,7 @@ menu = st.sidebar.radio("📚 Menu", [
 # 1. BERANDA
 # ============================================
 if menu == "🏠 Beranda":
-    st.title("🎉 Selamat Datang di UncertaintyCalc!")
+    st.title("🎉 Selamat Datang di ChemCalc!")
     st.markdown("""
     Situs web interaktif untuk memahami dan menghitung nilai **ketidakpastian** dalam pengukuran ilmiah dan teknis.
 
