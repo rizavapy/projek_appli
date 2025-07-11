@@ -2,171 +2,148 @@ import streamlit as st
 import numpy as np
 import math
 
-st.set_page_config(page_title="Nilai Ketidakpastian", layout="wide")
+st.set_page_config(page_title="Ketidakpastian Pengukuran", layout="wide")
 
-st.title("📏 Nilai Ketidakpastian dalam Pengukuran")
+st.title("📏 Aplikasi Ketidakpastian Pengukuran")
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "🏠 Beranda", "📘 Dasar Teori", "🔢 Hitung Otomatis", 
-    "✍️ Hitung Manual", "⚠️ Faktor Kesalahan", "🧪 Contoh Soal"
+st.sidebar.title("Navigasi")
+halaman = st.sidebar.radio("Pilih Halaman:", [
+    "📘 Dasar Teori",
+    "🔢 Hitung Otomatis",
+    "✍️ Hitung Manual",
+    "⚠️ Faktor Kesalahan",
+    "🧪 Contoh Soal & Pembahasan"
 ])
 
-# ========================================
-# 🏠 Tab 1: Beranda
-with tab1:
-    st.header("📏 Apa Itu Nilai Ketidakpastian?")
-    st.write("""
-    Dalam setiap pengukuran, selalu ada kemungkinan kesalahan atau deviasi dari nilai sebenarnya. 
-    Nilai ketidakpastian menggambarkan seberapa besar keraguan kita terhadap hasil pengukuran tersebut.
-    """)
-
-    st.subheader("🛠️ Apa yang Bisa Kamu Lakukan di Sini?")
+# 📘 DASAR TEORI
+if halaman == "📘 Dasar Teori":
+    st.header("📘 Dasar-Dasar Ketidakpastian Pengukuran")
+    st.subheader("1. Apa Itu Ketidakpastian?")
     st.markdown("""
-    - 📘 **Belajar Dasar-Dasarnya**: Simpangan baku, ketidakpastian mutlak & relatif.
-    - 🔢 **Hitung Nilai Ketidakpastian**: Kalkulator ketidakpastian tipe A, B, dan gabungan.
-    - ✍️ **Perhitungan Manual**: Langkah-langkah menggunakan kalkulator.
-    - ⚠️ **Faktor Kesalahan**: Suhu, kelembaban, dan faktor lingkungan lain.
-    - 🧪 **Contoh Soal & Pembahasan**: Soal interaktif beserta pembahasan.
+Setiap pengukuran pasti memiliki **keraguan terhadap hasil**.  
+Contoh: hasil pengukuran 120 cm bisa saja 119.8 cm atau 120.2 cm.
 
-    > 💡 “Pengukuran tanpa ketidakpastian hanyalah angka – pahami artinya, bukan hanya nilainya.”
-    """)
-
-    st.subheader("🎯 Siapa yang Cocok Menggunakan Situs Ini?")
-    st.write("""
-    Mahasiswa, pelajar, guru, dosen, teknisi laboratorium, atau siapa pun yang ingin menguasai konsep ketidakpastian dalam pengukuran secara praktis dan mudah dipahami.
-    """)
-
-# ========================================
-# 📘 Tab 2: Dasar Teori
-with tab2:
-    st.header("📘 Dasar Teori: Pahami Ketidakpastian Pengukuran")
-    st.markdown("""
-### 📌 1. Apa Itu Ketidakpastian Pengukuran?
-Setiap pengukuran memiliki ketidakpastian – yaitu tingkat keraguan terhadap nilai hasil ukur.
-
-### 🧪 2. Jenis-Jenis Ketidakpastian
-- ✅ **Tipe A**: Dari data eksperimen berulang.
-- ✅ **Tipe B**: Dari referensi/manual.
-
-### 🔍 3. Simpangan Baku (Standard Deviation)
-$$ s = \\sqrt{\\frac{\\sum{(x_i - \\bar{x})^2}}{n - 1}} $$
-
-### 🔧 4. Ketidakpastian Gabungan
-$$ u_c = \\sqrt{u_1^2 + u_2^2 + ... + u_n^2} $$
-
-### 💬 5. Ketidakpastian Mutlak dan Relatif
-- Mutlak: langsung dari simpangan.
-- Relatif: $ \\frac{u}{x} \\times 100\\% $
-
-### ✍️ 6. Cara Menyajikan Hasil
-Contoh: $ T = 27.4 \\pm 0.3 ^\\circ C $
-
-### 🎯 8. Kesalahan Umum
-- Tidak menyertakan ketidakpastian
-- Alat digital dianggap pasti
-- Salah jumlahkan ketidakpastian
-
-### 📎 9. Tabel Ringkasan Rumus
-
-| Konsep | Rumus |
-|-------|-------|
-| Rata-rata | $\\bar{x} = \\frac{\\sum x_i}{n}$ |
-| Simpangan Baku | $s = \\sqrt{\\frac{\\sum(x_i - \\bar{x})^2}{n - 1}}$ |
-| Ketidakpastian Gabungan | $u_c = \\sqrt{\\sum u_i^2}$ |
-| Ketidakpastian Relatif | $\\frac{u}{x} \\times 100\\%$ |
-    """)
-
-# ========================================
-# 🔢 Tab 3: Hitung Otomatis
-with tab3:
-    st.header("🔢 Hitung Nilai Ketidakpastian Otomatis")
-
-    data = st.text_area("Masukkan data pengukuran (pisahkan dengan koma):", "120.1, 120.3, 120.0, 120.2, 120.4")
-
-    if st.button("Hitung Ketidakpastian"):
-        try:
-            values = [float(i.strip()) for i in data.split(',')]
-            n = len(values)
-            mean = np.mean(values)
-            std_dev = np.std(values, ddof=1)
-            uncertainty_A = std_dev / math.sqrt(n)
-
-            st.success("📊 Hasil Perhitungan:")
-            st.write(f"Rata-rata (x̄): **{mean:.2f}**")
-            st.write(f"Simpangan Baku (s): **{std_dev:.4f}**")
-            st.write(f"Ketidakpastian Tipe A: **± {uncertainty_A:.2f}**")
-            st.write(f"Hasil Pengukuran: **{mean:.2f} ± {uncertainty_A:.2f}**")
-        except:
-            st.error("⚠️ Pastikan input berupa angka yang dipisahkan dengan koma.")
-
-# ========================================
-# ✍️ Tab 4: Hitung Manual
-with tab4:
-    st.header("✍️ Perhitungan Manual")
-
-    st.write("Contoh data pengukuran panjang meja (dalam cm):")
-    st.code("120.1, 120.3, 120.0, 120.2, 120.4")
-
-    st.markdown("""
-Langkah:
-1. Hitung rata-rata
-2. Hitung simpangan baku
-3. Hitung ketidakpastian A = s / √n
-
-Contoh:
-- Rata-rata = 120.18
-- Simpangan baku = 0.1596
-- Ketidakpastian A = 0.1596 / √5 ≈ 0.0713
-
-📏 **Hasil Akhir:**  
-120.18 ± 0.07 cm
+Ketidakpastian membantu menyampaikan seberapa **akurat dan terpercaya** hasil tersebut.
 """)
 
-# ========================================
-# ⚠️ Tab 5: Faktor Kesalahan
-with tab5:
-    st.header("⚠️ Kemungkinan Kesalahan Pengukuran")
+    st.subheader("2. Jenis-Jenis Ketidakpastian")
     st.markdown("""
-Beberapa faktor umum:
-- 🌡️ **Suhu**: Alat dan benda bisa memuai.
-- 💧 **Kelembaban**: Mengubah sifat bahan.
-- ✋ **Human Error**: Salah membaca alat.
-- 🔧 **Kalibrasi Buruk**: Alat tidak akurat.
-- 📊 **Lingkungan**: Getaran, cahaya, atau medan magnet.
-- 🔁 **Sampel Tidak Seragam**: Ukuran/berat bervariasi.
-
-🛡️ **Tips Mengurangi Kesalahan**:
-- Gunakan alat presisi tinggi
-- Kalibrasi alat
-- Ulangi pengukuran 5–10 kali
+- **Tipe A**: dari data eksperimen berulang → dihitung secara statistik  
+- **Tipe B**: dari pengalaman, spesifikasi alat, manual buku  
 """)
 
-# ========================================
-# 🧪 Tab 6: Contoh Soal & Pembahasan
-with tab6:
+    st.subheader("3. Rumus-Rumus Penting")
+    st.latex(r"\bar{x} = \frac{\sum x_i}{n}")
+    st.latex(r"s = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n-1}}")
+    st.latex(r"u_A = \frac{s}{\sqrt{n}}")
+    st.latex(r"u_c = \sqrt{u_1^2 + u_2^2 + ... + u_n^2}")
+    st.latex(r"u_{relatif} = \frac{u}{x} \times 100\%")
+
+    st.subheader("4. Penyajian Hasil")
+    st.markdown("Format: **Hasil = Nilai ± Ketidakpastian (satuan)**")
+    st.markdown("Contoh: Suhu = 27.4 ± 0.3 °C")
+
+# 🔢 KALKULATOR OTOMATIS
+elif halaman == "🔢 Hitung Otomatis":
+    st.header("🔢 Kalkulator Otomatis Ketidakpastian")
+
+    st.markdown("Masukkan data pengukuran (misal: `120.1, 120.3, 120.0, 120.2, 120.4`)")
+
+    data_input = st.text_area("Data Pengukuran:", "120.1, 120.3, 120.0, 120.2, 120.4")
+    try:
+        data = np.array([float(i.strip()) for i in data_input.split(",")])
+        n = len(data)
+        xbar = np.mean(data)
+        s = np.std(data, ddof=1)
+        uA = s / np.sqrt(n)
+
+        st.success("✅ Hasil Tipe A")
+        st.write(f"Rata-rata (x̄): {xbar:.5f}")
+        st.write(f"Simpangan Baku (s): {s:.5f}")
+        st.write(f"Ketidakpastian Tipe A (uA): ± {uA:.5f}")
+        st.markdown(f"**Hasil Akhir:** {xbar:.2f} ± {uA:.2f} satuan")
+
+        st.markdown("---")
+        st.subheader("➕ Tambahkan Ketidakpastian Tipe B (opsional)")
+        ub = st.number_input("Ketidakpastian Tipe B (misal spesifikasi alat)", 0.0)
+        if ub > 0:
+            uc = math.sqrt(uA**2 + ub**2)
+            st.success(f"✅ Ketidakpastian Gabungan (uc): ± {uc:.5f}")
+            st.markdown(f"**Hasil Gabungan:** {xbar:.2f} ± {uc:.2f} satuan")
+
+    except:
+        st.error("Pastikan format input benar. Pisahkan angka dengan koma.")
+
+# ✍️ HITUNG MANUAL
+elif halaman == "✍️ Hitung Manual":
+    st.header("✍️ Perhitungan Manual: Contoh Kasus")
+
+    st.markdown("**Data:** `120.1, 120.3, 120.0, 120.2, 120.4`")
+    st.markdown("Langkah:")
+    st.markdown("""
+1. Hitung rata-rata:  
+   𝑥̄ = (jumlah data) / n = 120.18  
+2. Hitung (xi - x̄)² → jumlahkan  
+3. Hitung simpangan baku (s)  
+4. Hitung uA = s / √n  
+5. Hasil: Nilai ± uA
+""")
+
+    st.code("""
+Selisih kuadrat:
+(120.1 − 120.18)² = 0.0064
+(120.3 − 120.18)² = 0.0144
+...
+Jumlah = 0.102 → s = √(0.102/4) ≈ 0.1596
+uA = 0.1596 / √5 ≈ 0.0713
+Hasil = 120.18 ± 0.07 cm
+""")
+
+# ⚠️ KESALAHAN UMUM
+elif halaman == "⚠️ Faktor Kesalahan":
+    st.header("⚠️ Faktor Penyebab Ketidakpastian Tinggi")
+
+    st.markdown("""
+**1. Perubahan Suhu** 🌡️  
+   → Alat memuai/menciut
+
+**2. Kelembaban Udara** 💧  
+   → Benda menyerap air
+
+**3. Human Error** ✋  
+   → Membaca alat tidak sejajar (paralaks)
+
+**4. Alat Tidak Dikalibrasi** 🔧  
+   → Timbangan miring, alat rusak
+
+**5. Lingkungan** 📊  
+   → Getaran, cahaya, listrik
+
+**6. Sampel Tidak Seragam** 🔁  
+   → Objek tidak homogen
+""")
+
+# 🧪 CONTOH SOAL
+elif halaman == "🧪 Contoh Soal & Pembahasan":
     st.header("🧪 Contoh Soal & Pembahasan")
 
-    st.subheader("Contoh Soal 1 – Ketidakpastian Tipe A")
-    st.markdown("""
-Seorang siswa mengukur waktu (dalam detik):  
-`1.20, 1.18, 1.22, 1.19, 1.21`
+    with st.expander("📘 Soal 1: Ketidakpastian Tipe A"):
+        st.markdown("""
+Data waktu (s): `1.20, 1.18, 1.22, 1.19, 1.21`
 
-✅ Rata-rata: 1.20 s  
-✅ Simpangan baku: 0.0158 s  
-✅ Ketidakpastian A = 0.0158 / √5 ≈ 0.0071 s  
-
-📏 **Hasil Akhir**: 1.20 ± 0.01 s
+Rata-rata = 1.20 s  
+s = √(jumlah selisih kuadrat / 4) ≈ 0.0158  
+uA = s / √5 ≈ 0.0071 s  
+**Jawaban:** 1.20 ± 0.01 s
 """)
 
-    st.subheader("Contoh Soal 2 – Ketidakpastian Gabungan")
-    st.markdown("""
+    with st.expander("📘 Soal 2: Ketidakpastian Gabungan"):
+        st.markdown("""
 Panjang = 120.0 ± 0.5 cm  
 Lebar = 60.0 ± 0.3 cm  
+Luas = 120 × 60 = 7200 cm²
 
-✅ Luas = 120 × 60 = 7200 cm²  
-✅ Relatif:  
-$$ u_L/L = \\sqrt{(0.5/120)^2 + (0.3/60)^2} ≈ 0.00651 $$  
-✅ u_L = 0.00651 × 7200 ≈ 46.87
-
-📏 **Hasil Akhir**: 7200 ± 47 cm²
+uL/L = √[(0.5/120)² + (0.3/60)²] = 0.00651  
+uL = 0.00651 × 7200 ≈ 47 cm²  
+**Jawaban:** Luas = 7200 ± 47 cm²
 """)
