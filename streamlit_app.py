@@ -1,32 +1,23 @@
 import streamlit as st
-from streamlit_lottie import st_lottie
-import requests
 
 # ----------------------------- CONFIG
 st.set_page_config(page_title="Beranda Kimia", page_icon="🧪", layout="centered")
 
-# ----------------------------- LOTTIE ANIMATION
-def load_lottie_url(url: str):
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
-    return r.json()
-
-lottie_chem = load_lottie_url("https://lottie.host/c09fe831-e982-40a1-a725-183c2d3d7b16/9kDZnkgv9f.json")
-
 # ----------------------------- MULTILANGUAGE CONTROL
 lang = st.radio("🌐 Pilih Bahasa", ["Indonesia", "English"])
 
-# ----------------------------- TITLE + ANIM
-st_lottie(lottie_chem, speed=1, width=250, height=250, key="chem_anim")
+# ----------------------------- TITLE
 st.title("🧪 Aplikasi Analisis Kimia")
 st.markdown("---")
 
 # ----------------------------- CONTENT
 if lang == "Indonesia":
-    st.header("Selamat Datang!!")
+    st.header("Selamat Datang! 👋")
     st.markdown(
         """
+        Ini adalah aplikasi web interaktif untuk mendukung pembelajaran dan pekerjaan di bidang **analisis kimia**.  
+        Cocok untuk mahasiswa, dosen, analis laboratorium, dan siapa pun yang berkecimpung di dunia kimia.
+
         ### 📚 Dasar Kimia
         Analisis kimia melibatkan proses identifikasi dan kuantifikasi senyawa dalam sampel.  
         Hal ini mencakup metode klasik seperti titrasi, hingga metode instrumen seperti spektrofotometri dan kromatografi.
