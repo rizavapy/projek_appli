@@ -1,185 +1,103 @@
 import streamlit as st
-import numpy as np
-import pandas as pd
-import math
-import datetime as dt
 
-st.set_page_config(page_title="Lab Uncertainty Calculator", page_icon="⚗️")
+# --------------------- PAGE CONFIG ---------------------
+st.set_page_config(page_title="Beranda Aplikasi Kimia", page_icon="🧪")
 
-# --------------------------- SIDEBAR NAVIGATION -----------------------------
-st.sidebar.title("⚗️ Uncertainty Toolkit")
-page = st.sidebar.radio(
-    "Pilih modul",
-    ("📊 Combined Uncertainty", "🧪 pH Measurement", "✅ Error Checklist"),
-)
+# --------------------- TOGGLE LANGUAGE ---------------------
+lang = st.sidebar.radio("🌐 Pilih Bahasa / Language", ("🇮🇩 Bahasa Indonesia", "🇬🇧 English"))
 
-# ----------------------------------------------------------------------------
-# 1) COMBINED UNCERTAINTY (generic)
-# ----------------------------------------------------------------------------
-if page == "📊 Combined Uncertainty":
-    st.header("Combined & Expanded Uncertainty")
+# --------------------- BAHASA INDONESIA ---------------------
+if lang == "🇮🇩 Bahasa Indonesia":
+    st.title("👩‍🔬 Selamat Datang di Aplikasi Analisis Kimia")
 
     st.markdown(
         """
-        Masukkan hasil pengukuran berulang (Type A) **atau** komponen ketidakpastian (Type B).
-
-        Rumus GUM:  
-        \\[
-            u_c = \\sqrt{\\sum_{i=1}^{n} u_i^2}, \\quad
-            U = k\\,u_c \\quad (k=2\\:≈95\\%\\,CI)
-        \\]
+        Aplikasi ini dirancang untuk membantu mahasiswa, analis, dan teknisi laboratorium 
+        dalam memahami dan menghitung **ketidakpastian pengukuran**, serta menyediakan 
+        alat bantu lain seputar **analisis kimia kuantitatif**.
+        
+        ### 📚 Apa Itu Ketidakpastian Pengukuran?
+        Dalam dunia laboratorium, hasil pengukuran tidak pernah 100% pasti. 
+        Ketidakpastian menggambarkan batas kepercayaan dari hasil yang didapat.
+        
+        Misalnya, saat kamu menimbang zat sebanyak **5,03 g**, nilai tersebut punya 
+        *ketidakpastian* — mungkin ±0,01 g tergantung alat & kondisi.
+        
+        ### 🧭 Tujuan Aplikasi Ini:
+        - Menyediakan **alat hitung cepat** ketidakpastian (Type A & B)
+        - Memberikan edukasi tentang dasar-dasar ketidakpastian
+        - Mendukung pemahaman praktikum & validasi metode
+        
+        ### 📎 Sumber Utama Referensi:
+        - GUM (*Guide to the Expression of Uncertainty in Measurement*)
+        - MK Training Blog: [Ketidakpastian Pengukuran](https://mktraining.co.id/blog/ketidakpastian-pengukuran-dalam-analisis-kimia/)
         """
     )
 
-    # TYPE A: repetitive data
-    st.subheader("Type A – Data Berulang")
-    raw = st.text_area(
-        "Tempel/ketik data (pisahkan dengan koma, spasi, atau baris baru)",
-        placeholder="10.13 10.11 10.15 10.14",
-    )
+    with st.expander("🔍 Ringkasan dari MK Training"):
+        st.markdown(
+            """
+            Ketidakpastian pengukuran dalam laboratorium **bukanlah kesalahan**, 
+            tetapi bagian tak terhindarkan dari setiap pengukuran.  
+            
+            Menurut artikel MK Training:
+            - Ketidakpastian menunjukkan **seberapa besar keraguan** terhadap hasil pengukuran.
+            - Bisa berasal dari **alat ukur**, **pengamat**, **lingkungan**, atau **metode analisis**.
+            - Ada dua jenis:
+              - **Type A**: Berdasarkan statistik (pengulangan data)
+              - **Type B**: Berdasarkan estimasi (pengalaman, spesifikasi alat)
+            
+            Penyajian akhir hasil harus ditulis seperti:
+            ```
+            pH = 6,90 ± 0,02 (k=2)
+            ```
+            """
+        )
 
-    col1, col2 = st.columns(2)
-    with col1:
-        n_dec = st.number_input("Resolusi alat / digit", value=0.01)
-    with col2:
-        k = st.selectbox("Coverage factor k", options=[2, 3], index=0)
-
-    data = None
-    if raw.strip():
-        try:
-            data = np.fromstring(raw, sep=" ")
-        except ValueError:
-            st.error("Format data salah 🤔")
-
-    # TYPE B: list of components
-    st.subheader("Type B – Komponen Individu")
-    df = st.experimental_data_editor(
-        pd.DataFrame({"Komponen": [], "u (σ atau U/√3)": []}),
-        num_rows="dynamic",
-        use_container_width=True,
-    )
-
-    # ------------------- CALCULATION -------------------
-    if st.button("🔍 Hitung Uncertainty"):
-        u_components = []
-
-        # Type A
-        if data is not None and len(data) > 1:
-            s = np.std(data, ddof=1)
-            u_stats = s / np.sqrt(len(data))
-            u_dig = n_dec / math.sqrt(12)  # half‑digit / √3
-            u_components.extend([u_stats, u_dig])
-
-            st.success(
-                f"Type A → s={s:.5g},  uₛ={u_stats:.5g},  u_digit={u_dig:.5g}"
-            )
-
-        # Type B table
-        if not df.empty:
-            for val in df["u (σ atau U/√3)"].dropna():
-                try:
-                    u_components.append(float(val))
-                except ValueError:
-                    pass
-
-        if u_components:
-            uc = math.sqrt(sum(u**2 for u in u_components))
-            U = k * uc
-            st.markdown(
-                f"""
-                ### 📈 Hasil  
-                * u<sub>c</sub> = `{uc:.5g}`  
-                * U (k={k}) = `{U:.5g}`
-                """,
-                unsafe_allow_html=True,
-            )
-        else:
-            st.warning("Tambahkan minimal satu komponen uncertainty!")
-
-# ----------------------------------------------------------------------------
-# 2) pH MEASUREMENT MODULE
-# ----------------------------------------------------------------------------
-elif page == "🧪 pH Measurement":
-    st.header("Uncertainty Estimator – pH Meter")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        resol = st.number_input("Resolusi display (pH)", 0.01, 0.1, 0.01)
-        buffer_unc = st.number_input("Uncertainty buffer (pH)", 0.005, 0.1, 0.02)
-        drift = st.number_input("Drift per jam (pH)", 0.0, 0.1, 0.02)
-    with col2:
-        temp = st.number_input("Suhu ± (°C)", 0.1, 5.0, 1.0)
-        coeff = 0.003  # pH per °C
-
-    # calculation
-    u_r = resol / math.sqrt(12)
-    u_b = buffer_unc / math.sqrt(3)
-    u_T = coeff * temp / math.sqrt(3)
-    u_d = drift / math.sqrt(3)
-    u_c_ph = math.sqrt(u_r**2 + u_b**2 + u_T**2 + u_d**2)
-    U_ph = 2 * u_c_ph
-
-    st.markdown(
-        f"""
-        ### 📊 Output  
-        u<sub>r</sub>={u_r:.4f},  u<sub>b</sub>={u_b:.4f},  
-        u<sub>T</sub>={u_T:.4f},  u<sub>d</sub>={u_d:.4f}  
-
-        **u<sub>c</sub>(pH) = {u_c_ph:.4f}**  
-        **U (k=2) = {U_ph:.4f}**
-        """,
-        unsafe_allow_html=True,
-    )
-
-# ----------------------------------------------------------------------------
-# 3) ERROR CHECKLIST
-# ----------------------------------------------------------------------------
+# --------------------- ENGLISH VERSION ---------------------
 else:
-    st.header("Lab Error Checklist")
+    st.title("👩‍🔬 Welcome to the Chemical Analysis App")
 
-    categories = {
-        "Instrumental": [
-            "Kalibrasi kedaluwarsa",
-            "Drift pembacaan",
-            "Suhu tidak stabil",
-        ],
-        "Prosedural": [
-            "Pembilasan buret kurang",
-            "Menunda pembacaan titrasi",
-            "Kontaminasi gelas ukur",
-        ],
-        "Human": [
-            "Salah catat angka",
-            "Salah satuan larutan",
-            "Pengenceran ganda tak tercatat",
-        ],
-    }
+    st.markdown(
+        """
+        This app is designed to help students, lab analysts, and technicians 
+        understand and calculate **measurement uncertainty**, and also provides 
+        tools for **quantitative chemical analysis**.
 
-    notes = {}
-    for cat, items in categories.items():
-        st.subheader(cat)
-        cols = st.columns(3)
-        for i, item in enumerate(items):
-            key = f"{cat}-{i}"
-            if cols[i % 3].checkbox(item, key=key):
-                notes[key] = item
+        ### 📚 What is Measurement Uncertainty?
+        In laboratories, no measurement result is 100% exact.  
+        Uncertainty reflects how confident we are about the reported result.
 
-    st.markdown("---")
-    if notes:
-        st.markdown("### 📝 Catatan kesalahan tercentang:")
-        for item in notes.values():
-            st.write(f"- {item}")
-    else:
-        st.info("Belum ada kesalahan yang dicentang.")
+        For example, if you weigh a substance and get **5.03 g**, 
+        the real value might be ±0.01 g depending on tools & conditions.
 
-# ----------------------- FOOTER -----------------------
-st.markdown(
-    """
-    <hr>
-    <center><small>
-    Built with ❤️ and Streamlit<br/>
-    {:%d %b %Y}
-    </small></center>
-    """.format(dt.datetime.now()),
-    unsafe_allow_html=True,
-)
+        ### 🧭 This App Aims to:
+        - Provide **quick calculators** for uncertainty (Type A & B)
+        - Educate users on the fundamentals of uncertainty
+        - Support lab work and method validation
+
+        ### 📎 Main Reference:
+        - GUM (*Guide to the Expression of Uncertainty in Measurement*)
+        - MK Training Blog: [Measurement Uncertainty](https://mktraining.co.id/blog/ketidakpastian-pengukuran-dalam-analisis-kimia/)
+        """
+    )
+
+    with st.expander("🔍 Summary from MK Training (translated)"):
+        st.markdown(
+            """
+            Measurement uncertainty is **not an error**, but a natural part 
+            of any laboratory result.  
+
+            According to MK Training:
+            - Uncertainty shows **how much doubt** surrounds a measurement result.
+            - It can come from **instrumentation**, **analyst skills**, **environment**, or **methods**.
+            - Two main types:
+              - **Type A**: Statistical, from repeated data
+              - **Type B**: Estimated, from tool specs or experience
+            
+            Final reporting should look like:
+            ```
+            pH = 6.90 ± 0.02 (k=2)
+            ```
+            """
+        )
