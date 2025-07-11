@@ -1,185 +1,57 @@
 import streamlit as st
+import math
 
-# Konfigurasi halaman
-st.set_page_config(
-    page_title="Mengukur Ketidakpastian dan Galat Praktikum",
-    page_icon="🧪",
-    layout="wide"
-)
+st.set_page_config(page_title="Kalkulator Ketidakpastian Praktikum", page_icon="🧪")
 
-# ----------- Toggle Bahasa -------------
-if "lang" not in st.session_state:
-    st.session_state.lang = "id"
+st.title("🧪 Kalkulator Nilai Ketidakpastian Praktikum")
+st.markdown("Hitung ketidakpastian berdasarkan nilai pH, galat, dan kesalahan laboratorium.")
 
-def toggle_language():
-    st.session_state.lang = "en" if st.session_state.lang == "id" else "id"
+# -------------------- INPUT --------------------
+st.header("📥 Input Data")
 
-# Tombol translate
-if st.session_state.lang == "id":
-    st.title("🧪 Mengukur Nilai Ketidakpastian dan Galat Suatu Praktikum")
-    st.button("🌐 Translate to English", on_click=toggle_language)
-else:
-    st.title("🧪 Measuring Uncertainty and Error in a Lab Practical")
-    st.button("🇮🇩 Terjemahkan ke Bahasa Indonesia", on_click=toggle_language)
+ph_value = st.number_input("Nilai pH hasil pengukuran:", min_value=0.0, max_value=14.0, value=7.00, step=0.01)
+alat_resolusi = st.number_input("Resolusi alat (misalnya pH meter = 0.01):", min_value=0.001, value=0.01)
+jumlah_pengulangan = st.number_input("Jumlah pengulangan (n):", min_value=1, value=3)
 
-st.markdown("---")
+pengukuran = []
+st.write("Masukkan hasil pengukuran berulang (n kali):")
+for i in range(jumlah_pengulangan):
+    val = st.number_input(f"Hasil ke-{i+1}", key=f"rep{i}", format="%.3f")
+    pengukuran.append(val)
 
-# --------- Konten Bahasa Indonesia ---------
-if st.session_state.lang == "id":
-    st.subheader("👋 Selamat Datang!")
-    st.write("""
-Selamat datang di aplikasi edukasi **kimia analitik praktikum**.
+galat_eksternal = st.number_input("Estimasi kesalahan lain (human error, suhu, dll) - opsional:", min_value=0.0, value=0.0)
 
-Kamu akan belajar tentang:
-- Nilai **ketidakpastian** dalam pengukuran
-- **Galat, akurasi, toleransi**, dan perbedaannya
-- Pentingnya menyatakan ketidakpastian di laporan laboratorium
-- Dasar-dasar ilmu kimia yang penting untuk analis
+# -------------------- PERHITUNGAN --------------------
+st.header("📊 Hasil Perhitungan Ketidakpastian")
 
-Aplikasi ini membantumu berpikir ilmiah dan kritis saat menganalisis data praktikum.
-""")
+if st.button("Hitung Ketidakpastian"):
 
-    st.subheader("📘 Teori: Ketidakpastian dan Galat")
-    st.write("""
-**1. Apa itu Ketidakpastian?**  
-Ketidakpastian adalah ukuran seberapa yakin (atau tidak yakin) kita terhadap hasil pengukuran.  
-Tidak ada alat yang benar-benar 100% akurat.
+    # 1. Type A Uncertainty (standard deviation of repeated measurements)
+    rata2 = sum(pengukuran) / jumlah_pengulangan
+    varians = sum((x - rata2) ** 2 for x in pengukuran) / (jumlah_pengulangan - 1 if jumlah_pengulangan > 1 else 1)
+    simpangan_baku = math.sqrt(varians)
+    u_type_a = simpangan_baku / math.sqrt(jumlah_pengulangan)
 
-**2. Perbedaan Penting:**
-- **Akurasi**: Kedekatan hasil terhadap nilai benar. Ditentukan oleh pabrikan.
-- **Galat (Error)**: Selisih antara nilai terukur dan nilai referensi.
-- **Toleransi**: Batas maksimum deviasi yang bisa diterima. Ditentukan oleh pengguna.
-- **Ketidakpastian**: Seberapa besar keraguan terhadap hasil.
+    # 2. Type B Uncertainty (alat + galat eksternal)
+    u_resolusi = alat_resolusi / math.sqrt(3)
+    u_lain = galat_eksternal / math.sqrt(3) if galat_eksternal > 0 else 0
 
-**Contoh Akurasi:**  
-Akurasi alat ukur tekanan 2% dari skala penuh (0–40 bar) = ±0,8 bar.  
-Pembacaan 20 bar bisa berarti nilai sebenarnya ada di 19,2 – 20,8 bar.
+    # 3. Combine all uncertainty
+    u_c = math.sqrt(u_type_a ** 2 + u_resolusi ** 2 + u_lain ** 2)
 
-**Contoh Kesalahan:**  
-Nilai standar = 20 bar, alat uji = 19,8 bar → Galat = -0,2 bar  
-Penting juga memahami:  
-- **Koreksi** = Nilai referensi − pembacaan  
-- **Penyimpangan** = deviasi dari hasil ke hasil
+    # 4. Expanded uncertainty (k = 2 untuk 95% confidence level)
+    U = 2 * u_c
 
-**Contoh Toleransi:**  
-Plat logam 10 mm, toleransi ±0,01 mm. Maka hasil di luar 9,99 – 10,01 mm tidak valid.
+    # -------------------- OUTPUT --------------------
+    st.success("✅ Ketidakpastian Berhasil Dihitung!")
+    st.write(f"📌 Rata-rata pH: **{rata2:.3f}**")
+    st.write(f"📉 Ketidakpastian Tipe A: **±{u_type_a:.3f}**")
+    st.write(f"🛠️ Ketidakpastian Tipe B (resolusi): **±{u_resolusi:.3f}**")
+    if galat_eksternal > 0:
+        st.write(f"📦 Ketidakpastian Eksternal Tambahan: **±{u_lain:.3f}**")
+    st.write(f"📈 Ketidakpastian Kombinasi: **±{u_c:.3f}**")
+    st.write(f"🧾 Ketidakpastian Diperluas (k=2): **±{U:.3f}**")
+    st.markdown(f"**📄 Hasil Akhir:** `pH = {rata2:.3f} ± {U:.3f} (k=2)`")
 
-**Contoh Ketidakpastian:**  
-Alat pH membaca 6,80 ± 0,05 → artinya nilai sebenarnya bisa 6,75 – 6,85  
-""")
-
-    st.info("""
-📌 **Catatan Penting:**  
-Dalam evaluasi hasil praktikum, kita **harus mempertimbangkan galat + ketidakpastian**, bukan hanya salah satunya.
-""")
-
-    st.subheader("📚 Dasar Ilmu Kimia untuk Analis")
-    st.markdown("""
-- **Mol & Massa Molar:** `n = m / Mr`
-- **Konsentrasi:** `M = n / V`, satuan ppm, %w/v, molalitas
-- **Stoikiometri:** Reaksi setara untuk konversi mol antar zat
-- **pH & Buffer:** `pH = −log[H⁺]`, gunakan Henderson-Hasselbalch
-- **Satuan & Dimensi:** Penting untuk menghindari kesalahan konversi
-- **Evaluasi Ketidakpastian:**
-    - Type A: berdasarkan data statistik pengulangan
-    - Type B: dari sertifikat kalibrasi, literatur, resolusi alat
-""")
-
-    st.subheader("📝 Cara Menghitung Ketidakpastian Secara Manual")
-    st.markdown("""
-1. **Identifikasi**: tentukan apa yang diukur (massa, volume, pH, dll)  
-2. **Cari sumber ketidakpastian**: 
-   - Type A: dari hasil pengukuran berulang  
-   - Type B: dari informasi alat (spesifikasi, resolusi)
-3. **Konversi ke simpangan baku**:
-   - Type A: `s / √n`
-   - Type B: `resolusi / √3` atau `range / 2√3`
-4. **Gabungkan**:  
-   `u_c = √(u₁² + u₂² + ... + uₙ²)`
-5. **Diperluas**:  
-   `U = k × u_c` (k = 2 → tingkat keyakinan 95%)
-6. **Lapor hasil**:  
-   Contoh: `pH = 6.80 ± 0.05 (k=2)`
-""")
-
-# --------- Konten Bahasa Inggris ---------
-else:
-    st.subheader("👋 Welcome!")
-    st.write("""
-Welcome to this **analytical chemistry practical** learning app!
-
-In this app, you'll learn about:
-- **Measurement uncertainty**
-- Differences between **error, accuracy, tolerance**
-- Why it's important to state uncertainty in lab reports
-- Basic chemistry theory for chemical analysts
-
-This app helps you think critically and scientifically about your lab data.
-""")
-
-    st.subheader("📘 Theory: Uncertainty and Error")
-    st.write("""
-**1. What is Uncertainty?**  
-Uncertainty is how confident (or not) we are about a measurement.  
-No device is ever 100% accurate.
-
-**2. Key Differences:**
-- **Accuracy**: Closeness to the true value (from manufacturer)
-- **Error**: Difference between measured and reference
-- **Tolerance**: Max allowable deviation (user-defined)
-- **Uncertainty**: Quantification of doubt
-
-**Accuracy Example:**  
-Accuracy = ±2% of full scale (0–40 bar) → ±0.8 bar  
-Reading 20 bar means the true value may be 19.2 – 20.8 bar
-
-**Error Example:**  
-Reference = 20 bar, device reads 19.8 bar → Error = -0.2 bar  
-Also understand:  
-- **Correction** = Reference − Reading  
-- **Deviation** = Absolute or relative variation
-
-**Tolerance Example:**  
-Metal part 10 mm ± 0.01 mm → any reading outside 9.99 – 10.01 mm is invalid
-
-**Uncertainty Example:**  
-pH meter shows 6.80 ± 0.05 → true value may be between 6.75 – 6.85
-""")
-
-    st.info("""
-📌 **Important Note:**  
-To evaluate an instrument or result, you must **combine error and uncertainty**, not ignore one.
-""")
-
-    st.subheader("📚 Chemistry Basics for Analysts")
-    st.markdown("""
-- **Mol & Molar Mass:** `n = m / Mr`
-- **Concentration:** `M = n / V`, units: ppm, %w/v, molality
-- **Stoichiometry:** Use balanced equations for mol conversions
-- **pH & Buffers:** `pH = −log[H⁺]`, use Henderson-Hasselbalch equation
-- **Units & Dimensions:** Always double-check conversions
-- **Uncertainty Evaluation:**
-    - Type A: statistical (repetition)
-    - Type B: from specs, certificates, resolution
-""")
-
-    st.subheader("📝 Manual Steps to Calculate Uncertainty")
-    st.markdown("""
-1. **Identify** what is being measured  
-2. **List sources** of uncertainty  
-   - Type A: from repeated data  
-   - Type B: from instrument specs, resolution  
-3. **Convert to standard deviation**:
-   - Type A: `s / √n`
-   - Type B: `resolution / √3`
-4. **Combine**:  
-   `u_c = √(u₁² + u₂² + ... + uₙ²)`
-5. **Expand**:  
-   `U = k × u_c` (k = 2 → 95% confidence level)
-6. **Report**:  
-   Example: `pH = 6.80 ± 0.05 (k=2)`
-""")
-
-# ----------- Footer -----------
-st.markdown("---")
-st.caption("Dibuat dengan ❤️ oleh Mahasiswa Analis Kimia • 2025")
+    st.markdown("---")
+    st.caption("Perhitungan mengikuti panduan GUM & ISO/IEC 17025")
