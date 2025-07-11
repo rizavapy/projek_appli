@@ -1,103 +1,72 @@
 import streamlit as st
+from streamlit_lottie import st_lottie
+import requests
 
-# --------------------- PAGE CONFIG ---------------------
-st.set_page_config(page_title="Beranda Aplikasi Kimia", page_icon="🧪")
+# ----------------------------- CONFIG
+st.set_page_config(page_title="Beranda Kimia", page_icon="🧪", layout="centered")
 
-# --------------------- TOGGLE LANGUAGE ---------------------
-lang = st.sidebar.radio("🌐 Pilih Bahasa / Language", ("🇮🇩 Bahasa Indonesia", "🇬🇧 English"))
+# ----------------------------- LOTTIE ANIMATION
+def load_lottie_url(url: str):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
 
-# --------------------- BAHASA INDONESIA ---------------------
-if lang == "🇮🇩 Bahasa Indonesia":
-    st.title("👩‍🔬 Selamat Datang di Aplikasi Analisis Kimia")
+lottie_chem = load_lottie_url("https://lottie.host/c09fe831-e982-40a1-a725-183c2d3d7b16/9kDZnkgv9f.json")
 
+# ----------------------------- MULTILANGUAGE CONTROL
+lang = st.radio("🌐 Pilih Bahasa", ["Indonesia", "English"])
+
+# ----------------------------- TITLE + ANIM
+st_lottie(lottie_chem, speed=1, width=250, height=250, key="chem_anim")
+st.title("🧪 Aplikasi Analisis Kimia")
+st.markdown("---")
+
+# ----------------------------- CONTENT
+if lang == "Indonesia":
+    st.header("Selamat Datang!!")
     st.markdown(
         """
-        Aplikasi ini dirancang untuk membantu mahasiswa, analis, dan teknisi laboratorium 
-        dalam memahami dan menghitung **ketidakpastian pengukuran**, serta menyediakan 
-        alat bantu lain seputar **analisis kimia kuantitatif**.
-        
-        ### 📚 Apa Itu Ketidakpastian Pengukuran?
-        Dalam dunia laboratorium, hasil pengukuran tidak pernah 100% pasti. 
-        Ketidakpastian menggambarkan batas kepercayaan dari hasil yang didapat.
-        
-        Misalnya, saat kamu menimbang zat sebanyak **5,03 g**, nilai tersebut punya 
-        *ketidakpastian* — mungkin ±0,01 g tergantung alat & kondisi.
-        
-        ### 🧭 Tujuan Aplikasi Ini:
-        - Menyediakan **alat hitung cepat** ketidakpastian (Type A & B)
-        - Memberikan edukasi tentang dasar-dasar ketidakpastian
-        - Mendukung pemahaman praktikum & validasi metode
-        
-        ### 📎 Sumber Utama Referensi:
-        - GUM (*Guide to the Expression of Uncertainty in Measurement*)
-        - MK Training Blog: [Ketidakpastian Pengukuran](https://mktraining.co.id/blog/ketidakpastian-pengukuran-dalam-analisis-kimia/)
+        ### 📚 Dasar Kimia
+        Analisis kimia melibatkan proses identifikasi dan kuantifikasi senyawa dalam sampel.  
+        Hal ini mencakup metode klasik seperti titrasi, hingga metode instrumen seperti spektrofotometri dan kromatografi.
+
+        ### 📏 Ketidakpastian Pengukuran
+        Dalam dunia laboratorium, tidak ada pengukuran yang benar-benar *pasti*.  
+        Oleh karena itu, penting untuk selalu menyertakan nilai **ketidakpastian** setiap kali melaporkan hasil.
+
+        Menurut [MKTraining](https://mktraining.co.id/blog/ketidakpastian-pengukuran-dalam-analisis-kimia/):
+
+        > Ketidakpastian pengukuran merupakan parameter penting dalam menyatakan keandalan nilai dari hasil pengukuran.  
+        > Tanpa menyertakan ketidakpastian, hasil uji bisa menyesatkan, bahkan dianggap tidak sah oleh lembaga akreditasi.
+
+        Kamu bisa mempelajari lebih lanjut di modul aplikasi kami atau kunjungi blog di atas.
         """
     )
-
-    with st.expander("🔍 Ringkasan dari MK Training"):
-        st.markdown(
-            """
-            Ketidakpastian pengukuran dalam laboratorium **bukanlah kesalahan**, 
-            tetapi bagian tak terhindarkan dari setiap pengukuran.  
-            
-            Menurut artikel MK Training:
-            - Ketidakpastian menunjukkan **seberapa besar keraguan** terhadap hasil pengukuran.
-            - Bisa berasal dari **alat ukur**, **pengamat**, **lingkungan**, atau **metode analisis**.
-            - Ada dua jenis:
-              - **Type A**: Berdasarkan statistik (pengulangan data)
-              - **Type B**: Berdasarkan estimasi (pengalaman, spesifikasi alat)
-            
-            Penyajian akhir hasil harus ditulis seperti:
-            ```
-            pH = 6,90 ± 0,02 (k=2)
-            ```
-            """
-        )
-
-# --------------------- ENGLISH VERSION ---------------------
 else:
-    st.title("👩‍🔬 Welcome to the Chemical Analysis App")
-
+    st.header("Welcome! 👋")
     st.markdown(
         """
-        This app is designed to help students, lab analysts, and technicians 
-        understand and calculate **measurement uncertainty**, and also provides 
-        tools for **quantitative chemical analysis**.
+        This interactive web app supports learning and lab work in **chemical analysis**.  
+        Designed for students, lecturers, lab analysts, and anyone involved in the world of chemistry.
 
-        ### 📚 What is Measurement Uncertainty?
-        In laboratories, no measurement result is 100% exact.  
-        Uncertainty reflects how confident we are about the reported result.
+        ### 📚 Chemistry Basics
+        Chemical analysis involves identifying and quantifying compounds in a sample.  
+        It includes classical methods (like titration) and instrumental methods (e.g., spectrophotometry, chromatography).
 
-        For example, if you weigh a substance and get **5.03 g**, 
-        the real value might be ±0.01 g depending on tools & conditions.
+        ### 📏 Measurement Uncertainty
+        In any lab, no measurement is completely *certain*.  
+        That's why it's crucial to report **measurement uncertainty** together with your results.
 
-        ### 🧭 This App Aims to:
-        - Provide **quick calculators** for uncertainty (Type A & B)
-        - Educate users on the fundamentals of uncertainty
-        - Support lab work and method validation
+        According to [MKTraining](https://mktraining.co.id/blog/ketidakpastian-pengukuran-dalam-analisis-kimia/):
 
-        ### 📎 Main Reference:
-        - GUM (*Guide to the Expression of Uncertainty in Measurement*)
-        - MK Training Blog: [Measurement Uncertainty](https://mktraining.co.id/blog/ketidakpastian-pengukuran-dalam-analisis-kimia/)
+        > Measurement uncertainty is a key parameter to express the reliability of results.  
+        > Without including uncertainty, test results can be misleading or even invalidated by accreditation bodies.
+
+        Learn more in the modules of this app or visit the blog above.
         """
     )
 
-    with st.expander("🔍 Summary from MK Training (translated)"):
-        st.markdown(
-            """
-            Measurement uncertainty is **not an error**, but a natural part 
-            of any laboratory result.  
-
-            According to MK Training:
-            - Uncertainty shows **how much doubt** surrounds a measurement result.
-            - It can come from **instrumentation**, **analyst skills**, **environment**, or **methods**.
-            - Two main types:
-              - **Type A**: Statistical, from repeated data
-              - **Type B**: Estimated, from tool specs or experience
-            
-            Final reporting should look like:
-            ```
-            pH = 6.90 ± 0.02 (k=2)
-            ```
-            """
-        )
+# ----------------------------- FOOTER
+st.markdown("---")
+st.caption("© 2025 | Aplikasi Analisis Kimia | Dibuat dengan ❤️ dan Streamlit")
