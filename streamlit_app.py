@@ -1,4 +1,6 @@
 import streamlit as st
+pip install streamlit
+streamlit run app_home.py
 
 # ----------------------------- CONFIG
 st.set_page_config(page_title="Beranda Kimia", page_icon="🧪", layout="centered")
