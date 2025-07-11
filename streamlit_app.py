@@ -150,4 +150,36 @@ else:
         ],
         "Human": [
             "Salah catat angka",
-            "Salah satuan lar
+            "Salah satuan larutan",
+            "Pengenceran ganda tak tercatat",
+        ],
+    }
+
+    notes = {}
+    for cat, items in categories.items():
+        st.subheader(cat)
+        cols = st.columns(3)
+        for i, item in enumerate(items):
+            key = f"{cat}-{i}"
+            if cols[i % 3].checkbox(item, key=key):
+                notes[key] = item
+
+    st.markdown("---")
+    if notes:
+        st.markdown("### 📝 Catatan kesalahan tercentang:")
+        for item in notes.values():
+            st.write(f"- {item}")
+    else:
+        st.info("Belum ada kesalahan yang dicentang.")
+
+# ----------------------- FOOTER -----------------------
+st.markdown(
+    """
+    <hr>
+    <center><small>
+    Built with ❤️ and Streamlit<br/>
+    {:%d %b %Y}
+    </small></center>
+    """.format(dt.datetime.now()),
+    unsafe_allow_html=True,
+)
