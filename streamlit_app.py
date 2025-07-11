@@ -173,5 +173,3 @@ elif menu == "🧪 Contoh Soal":
     **Luas Akhir:** 7200 ± 47 cm²
     """)
 
-        """)
-
