@@ -60,7 +60,7 @@ txt_id = {
         "- Dokumen ISO/IEC 17025 juga mensyaratkan pernyataan `U`.\n\n"
         "➡️ [Lihat artikel lengkap](https://mktraining.co.id/blog/ketidakpastian-pengukuran-dalam-analisis-kimia/)"
     ),
-    "footer": "Dibuat dengan ❤️ oleh Mahasiswa Analis Kimia • 2025"
+    "footer": "Dibuat oleh Mahasiswa POLITEKNIK AKA BOGOR • 2025"
 }
 
 txt_en = {
@@ -93,7 +93,7 @@ txt_en = {
         "- ISO/IEC 17025 requires declaration of `U`.\n\n"
         "➡️ [Read full article](https://mktraining.co.id/blog/ketidakpastian-pengukuran-dalam-analisis-kimia/)"
     ),
-    "footer": "Made with ❤️ by Chemical Analysis Student • 2025"
+    "footer": "Made by POLITEKNIK KIMIA BOGOR Student • 2025"
 }
 
 T = txt_id if st.session_state.lang == "id" else txt_en
