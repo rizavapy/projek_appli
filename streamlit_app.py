@@ -1,151 +1,226 @@
 import streamlit as st
+import numpy as np
 import pandas as pd
 import math
-from pathlib import Path
+import datetime as dt
 
-# Set the title and favicon that appear in the Browser's tab bar.
-st.set_page_config(
-    page_title='GDP dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
+st.set_page_config(page_title="Lab Uncertainty Calculator", page_icon="⚗️")
+
+# --------------------------- SIDEBAR NAVIGATION -----------------------------
+st.sidebar.title("⚗️ Uncertainty Toolkit")
+page = st.sidebar.radio(
+    "Pilih modul",
+    ("📊 Combined Uncertainty", "🧪 pH Measurement", "✅ Error Checklist"),
 )
 
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
+# ----------------------------------------------------------------------------
+# 1) COMBINED UNCERTAINTY (generic)
+# ----------------------------------------------------------------------------
+if page == "📊 Combined Uncertainty":
+    st.header("Combined & Expanded Uncertainty")
 
-@st.cache_data
-def get_gdp_data():
-    """Grab GDP data from a CSV file.
-
-    This uses caching to avoid having to read the file every time. If we were
-    reading from an HTTP endpoint instead of a file, it's a good idea to set
-    a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
-    """
-
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
-
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
-
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
+    st.markdown(
+        """
+        Masukkan hasil pengukuran berulang (Type A) **atau** cukup jumlahkan
+        komponen ketidakpastian (Type B).  
+        Rumus mengacu ke *Guide to the Expression of Uncertainty in Measurement (GUM)*:
+        \\[
+            u_c = \\sqrt{\\sum_{i=1}^{n} u_i^2}
+        \\]
+        dan
+        \\[
+            U = k\\,u_c \\quad (k = 2\\text{ untuk }95\\%~\\mathrm{CI})
+        \\]
+        """
     )
 
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
+    # TYPE A: repetitive data
+    st.subheader("Type A – Data Berulang")
+    raw = st.text_area(
+        "Tempel/ketik data (pisahkan dengan koma, spasi, atau baris baru)", 
+        placeholder="10.13 10.11 10.15 10.14"
+    )
 
-    return gdp_df
+    col1, col2 = st.columns(2)
+    with col1:
+        n_dec = st.number_input("Presisi alat (resolusi) / digit", value=0.01)
+    with col2:
+        k = st.selectbox("Coverage factor *k*", options=[2,3], index=0)
 
-gdp_df = get_gdp_data()
+    data = None
+    if raw.strip():
+        try:
+            data = np.fromstring(raw, sep=" ")
+        except ValueError:
+            st.error("Format data salah 🤔")
 
-# -----------------------------------------------------------------------------
-# Draw the actual page
+    # TYPE B: list of components
+    st.subheader("Type B – Komponen Individu")
+    st.markdown(
+        "Contoh: **Timbangan (±0.005 g), Pipet (±0.03 mL)**, dll. "
+        "Input (±)U disini:"
+    )
+    df = st.experimental_data_editor(
+        pd.DataFrame({"Komponen": [], "u (σ atau U/√3)": []}),
+        num_rows="dynamic",
+        use_container_width=True,
+    )
 
-# Set the title that appears at the top of the page.
-'''
-# :earth_americas: GDP dashboard
+    # ------------------- CALCULATION -------------------
+    if st.button("🔍 Hitung Uncertainty"):
+        u_components = []
 
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
-'''
+        # Type A
+        if data is not None and len(data) > 1:
+            s = np.std(data, ddof=1)
+            u_stats = s / np.sqrt(len(data))
+            # digitisation (half resolution / sqrt(3))
+            u_dig = n_dec / math.sqrt(12)
+            u_components.extend([u_stats, u_dig])
 
-# Add some spacing
-''
-''
+            st.success(
+                f"Type A: s = {s:.5g},  uₛ = {u_stats:.5g}; "
+                f"u_digit = {u_dig:.5g}"
+            )
 
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
+        # Type B table
+        if not df.empty:
+            for val in df["u (σ atau U/√3)"].dropna():
+                try:
+                    u_components.append(float(val))
+                except ValueError:
+                    pass
 
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
-    min_value=min_value,
-    max_value=max_value,
-    value=[min_value, max_value])
-
-countries = gdp_df['Country Code'].unique()
-
-if not len(countries):
-    st.warning("Select at least one country")
-
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
-
-''
-''
-''
-
-# Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
-]
-
-st.header('GDP over time', divider='gray')
-
-''
-
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
-)
-
-''
-''
-
-
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
-
-st.header(f'GDP in {to_year}', divider='gray')
-
-''
-
-cols = st.columns(4)
-
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
-
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
+        if u_components:
+            uc = math.sqrt(sum(u**2 for u in u_components))
+            U = k * uc
+            st.markdown(
+                f"""
+                ### 📈 Hasil  
+                * **u<sub>c</sub> (combined)** = `{uc:.5g}`  
+                * **U (expanded, k={k})** = `{U:.5g}`
+                """
+            )
         else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
+            st.warning("Tambahkan minimal satu komponen uncertainty!")
 
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
-        )
+# ----------------------------------------------------------------------------
+# 2) pH MEASUREMENT MODULE
+# ----------------------------------------------------------------------------
+elif page == "🧪 pH Measurement":
+    st.header("Uncertainty Estimator – pH Meter")
+
+    st.markdown(
+        """
+        Sumber ketidakpastian umum untuk pH (electrode‐type):  
+
+        | Komponen | Simbol | Default σ |
+        |----------|--------|-----------|
+        | Resolusi pembacaan | \(u_r\) | 0.01 pH |
+        | Kalibrasi buffer | \(u_b\) | 0.01–0.05 pH |
+        | Drift ± per jam | \(u_d\) | 0.02 pH |
+        | Temperatur (0.003 pH/°C) | \(u_T\) | dihitung |
+        """
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        resol = st.number_input("Resolusi display (pH)", 0.01, 0.1, 0.01)
+        buffer_unc = st.number_input("Uncertainty buffer (pH)", 0.005, 0.1, 0.02)
+        drift = st.number_input("Drift per jam (pH)", 0.0, 0.1, 0.02)
+    with col2:
+        temp = st.number_input("Suhu ± (°C) seberapa stabil?", 0.1, 5.0, 1.0)
+        coeff = 0.003  # pH/°C
+
+    # calculation
+    u_r = resol / math.sqrt(12)
+    u_b = buffer_unc / math.sqrt(3)
+    u_T = coeff * temp / math.sqrt(3)
+    u_d = drift / math.sqrt(3)
+
+    u_c_ph = math.sqrt(u_r**2 + u_b**2 + u_T**2 + u_d**2)
+    U_ph = 2 * u_c_ph
+
+    st.markdown(
+        f"""
+        ### 📊 Output  
+        * u<sub>r</sub> = {u_r:.4f}  
+        * u<sub>b</sub> = {u_b:.4f}  
+        * u<sub>T</sub> = {u_T:.4f}  
+        * u<sub>d</sub> = {u_d:.4f}  
+
+        **u<sub>c</sub>(pH) = {u_c_ph:.4f}**  
+        **U (k=2, 95 %) = {U_ph:.4f}**
+        """
+    )
+
+# ----------------------------------------------------------------------------
+# 3) ERROR CHECKLIST
+# ----------------------------------------------------------------------------
+else:
+    st.header("Lab Error Checklist")
+
+    st.markdown(
+        """
+        Tandai faktor‐faktor yang *mungkin* terjadi selama percobaan.  
+        (Tidak dikalkulasi otomatis—hanya sebagai catatan QA/QC.)
+        """
+    )
+
+    categories = {
+        "Instrumental": [
+            "Kalibrasi kedaluwarsa",
+            "Drift pembacaan",
+            "Suhu tidak stabil",
+        ],
+        "Prosedural": [
+            "Pembilasan buret kurang",
+            "Menunda pembacaan titrasi",
+            "Kontaminasi gelas ukur",
+        ],
+        "Human": [
+            "Salah catat angka",
+            "Salah satuan larutan",
+            "Pengenceran ganda tak tercatat",
+        ],
+    }
+
+    notes = {}
+    for cat, items in categories.items():
+        st.subheader(cat)
+        cols = st.columns(3)
+        for i, item in enumerate(items):
+            key = f"{cat}-{i}"
+            if cols[i % 3].checkbox(item, key=key):
+                notes[key] = item
+
+    st.markdown("---")
+    if notes:
+        st.markdown("### 📝 Catatan kesalahan tercentang:")
+        for item in notes.values():
+            st.write(f"- {item}")
+    else:
+        st.info("Belum ada kesalahan yang dicentang.")
+
+
+# ----------------------- FOOTER -----------------------
+st.markdown(
+    """
+    <hr>
+    <center><small>
+    Built with ❤️ and Streamlit  
+    {:%d %b %Y}
+    </small></center>
+    """.format(dt.datetime.now()),
+    unsafe_allow_html=True,
+)
+Cara Menjalankan
+bash
+Salin
+Edit
+# 1. Instal dependensi
+pip install streamlit pandas numpy
+
+# 2. Simpan kode di atas sebagai app_uncertainty.py
+# 3. Jalankan
+streamlit run app_uncertainty.py
