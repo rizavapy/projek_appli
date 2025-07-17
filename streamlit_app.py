@@ -10,7 +10,7 @@ menu = st.sidebar.radio("📂 Navigasi", [
     "Dasar Teori",
     "Kalkulator Ketidakpastian",
     "Grafik dan Regresi",
-    "Cara Perhitungan Manual",
+    "Cara Perhitungan Manual", 
     "Faktor Kesalahan",
     "Contoh Soal dan Pembahasan"
 ])
