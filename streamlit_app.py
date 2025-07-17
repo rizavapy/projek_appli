@@ -1,56 +1,37 @@
-import streamlit as st
-import numpy as np
-
-# ===== CONFIG =====
-st.set_page_config(page_title="UncertaintyCalc", layout="wide")
-
-# ===== BACKGROUND & SIDEBAR STYLE =====
-def add_background_and_sidebar_style():
+def add_background_with_transparency():
     st.markdown(
         f"""
         <style>
-        /* Background utama aplikasi */
+        /* Gambar background */
         .stApp {{
-            background-image: url(https://id.pinterest.com/pin/222998619041064434/);
-            background-attachment: fixed;
+            background-image: url("https://i.pinimg.com/originals/e3/4c/53/e34c53e857fe80c47c1fdf0d50dc0615.jpg");
             background-size: cover;
+            background-attachment: fixed;
             background-position: center;
         }}
 
-        /* Sidebar warna biru */
+        /* Sidebar dengan warna biru */
         section[data-testid="stSidebar"] > div:first-child {{
-            background-color: #007bff;
+            background-color: rgba(0, 123, 255, 0.9);  /* Biru semi-transparan */
             color: white;
         }}
 
-        /* Warna teks di sidebar */
+        /* Kontainer utama transparan */
+        .main > div {{
+            background-color: rgba(255, 255, 255, 0.75);  /* Putih semi-transparan */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }}
+
+        /* Warna teks sidebar agar tetap terbaca */
         div[data-testid="stSidebar"] label,
         div[data-testid="stSidebar"] span {{
             color: white !important;
-        }}
-
-        /* Warna item navigasi */
-        div[data-testid="stSidebar"] .css-1v3fvcr {{
-            color: white !important;
-        }}
-
-        /* Optional: ubah warna hover jika ingin lebih interaktif */
-        div[data-testid="stSidebar"] .css-1v3fvcr:hover {{
-            color: #ffd700 !important;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
-add_background_and_sidebar_style()
-
-# ===== SIDEBAR MENU =====
-menu = st.sidebar.radio("📂 Navigasi", [
-    "Beranda",
-    "Dasar Teori",
-    "Kalkulator Ketidakpastian",
-    "Cara Perhitungan Manual",
-    "Faktor Kesalahan",
-    "Contoh Soal dan Pembahasan"
-])
+add_background_with_transparency()
