@@ -1,7 +1,6 @@
 import streamlit as st
-import numpy as np
 
-# ===== DEFINISI FUNGSI HARUS DI ATAS =====
+# === Gaya CSS Background ===
 def add_background_with_transparency():
     st.markdown(
         f"""
@@ -12,15 +11,15 @@ def add_background_with_transparency():
             background-attachment: fixed;
             background-position: center;
         }}
-        section[data-testid="stSidebar"] > div:first-child {{
-            background-color: rgba(0, 123, 255, 0.9);
-            color: white;
-        }}
         .main > div {{
             background-color: rgba(255, 255, 255, 0.75);
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }}
+        section[data-testid="stSidebar"] > div:first-child {{
+            background-color: rgba(0, 123, 255, 0.9);
+            color: white;
         }}
         div[data-testid="stSidebar"] label,
         div[data-testid="stSidebar"] span {{
@@ -31,6 +30,10 @@ def add_background_with_transparency():
         unsafe_allow_html=True
     )
 
-# ===== SET PAGE CONFIG & PANGGIL FUNGSI =====
-st.set_page_config(page_title="UncertaintyCalc", layout="wide")
+# === Config & Styling ===
+st.set_page_config(page_title="Tes Background", layout="wide")
 add_background_with_transparency()
+
+# === Tampilan Awal Sederhana ===
+st.title("🔬 Aplikasi Percobaan Background")
+st.write("Ini adalah halaman percobaan untuk memastikan background gambar dan transparansi bekerja dengan benar.")
