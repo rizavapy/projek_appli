@@ -6,7 +6,7 @@ def add_background_with_transparency():
         f"""
         <style>
         .stApp {{
-            background-image: url("https://i.pinimg.com/originals/e3/4c/53/e34c53e857fe80c47c1fdf0d50dc0615.jpg");
+            background-image: url("https://id.pinterest.com/pin/22518066880644171/");
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
