@@ -9,6 +9,7 @@ menu = st.sidebar.radio("📂 Navigasi", [
     "Beranda",
     "Dasar Teori",
     "Kalkulator Ketidakpastian",
+    "Grafik dan Regresi",
     "Cara Perhitungan Manual",
     "Faktor Kesalahan",
     "Contoh Soal dan Pembahasan"
@@ -187,6 +188,46 @@ elif menu == "Kalkulator Ketidakpastian":
 
         except:
             st.error("❌ Format input tidak valid. Pastikan hanya angka dan dipisahkan koma.")
+
+# ======================================================
+# 7. GRAFIK & REGRESI
+# ======================================================
+elif menu == "📉 Grafik & Regresi":
+    st.title("📉 Grafik Pengukuran & Regresi Linier")
+
+    st.markdown("""
+    Masukkan data pengukuran untuk melihat visualisasi grafik scatter dan hasil analisis regresi linier:
+    
+    - Menampilkan **hubungan antara urutan pengukuran dan nilai**
+    - Dapatkan informasi: **Slope, Intercept, Koefisien Korelasi (R), dan R²**
+    """, unsafe_allow_html=True)
+
+    data_input = st.text_area("📥 Masukkan data pengukuran (pisahkan dengan koma)", "10.1, 10.3, 10.2, 10.4, 10.2")
+
+    if st.button("🔍 Tampilkan Grafik"):
+        try:
+            data = np.array([float(x.strip()) for x in data_input.split(",") if x.strip() != ""])
+            n = len(data)
+
+            if n < 2:
+                st.error("❗ Minimal 2 data diperlukan untuk regresi.")
+            else:
+                import matplotlib.pyplot as plt
+                from scipy.stats import linregress
+
+                x = np.arange(1, n + 1)
+                y = data
+
+                slope, intercept, r_value, p_value, std_err = linregress(x, y)
+                reg_line = slope * x + intercept
+
+                fig, ax = plt.subplots()
+                ax.scatter(x, y, label="Data", color="orange")
+                ax.plot(x, reg_line, color="blue", label=f"y = {slope:.2f}x + {intercept:.2f}")
+                ax.set_xlabel("Pengukuran ke-")
+                ax.set_ylabel("Nilai")
+                ax.set_title("Grafik Regresi Linier")
+
 
 # ===== CARA PERHITUNGAN MANUAL =====
 elif menu == "Cara Perhitungan Manual":
