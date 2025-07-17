@@ -3,7 +3,7 @@ import streamlit as st
 st.markdown("""
     <style>
     .stApp {
-        background-image: url("https://tse2.mm.bing.net/th/id/OIP.yuC-iq5ncKQFDxwkLdBrUAHaEg?pid=Api&P=0&h=180");
+        background-image: url("https://i.pinimg.com/736x/f2/aa/27/f2aa27e5a4f798983bf18eb329c91d74.jpg");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
