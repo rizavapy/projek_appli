@@ -11,7 +11,7 @@ def add_background_and_sidebar_style():
         <style>
         /* Background utama aplikasi */
         .stApp {{
-            background-image: url("https://i.pinimg.com/originals/e3/4c/53/e34c53e857fe80c47c1fdf0d50dc0615.jpg");
+            background-image: url(https://id.pinterest.com/pin/222998619041064434/);
             background-attachment: fixed;
             background-size: cover;
             background-position: center;
