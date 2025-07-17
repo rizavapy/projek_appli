@@ -1,11 +1,12 @@
 import streamlit as st
 import numpy as np
-
+import matplotlib.pyplot as plt
+from scipy.stats import linregress
 
 st.set_page_config(page_title="UncertaintyCalc", layout="wide")
 
 # Sidebar Navigation
-menu = st.sidebar.radio("📂 Navigasi", [
+menu = st.sidebar.radio("\U0001F4C2 Navigasi", [
     "Beranda",
     "Dasar Teori",
     "Kalkulator Ketidakpastian",
@@ -17,7 +18,6 @@ menu = st.sidebar.radio("📂 Navigasi", [
 
 # === BERANDA ===
 if menu == "Beranda":
-    # Header & Deskripsi Menarik
     st.markdown("""
     <div style='text-align: center; padding: 20px 0;'>
         <h1 style='color: #1f77b4;'>Selamat Datang di <span style='color:#32cd32;'>PhyCalc</span>!</h1>
@@ -45,7 +45,6 @@ if menu == "Beranda":
         st.session_state.slide_index = 0
 
     col1, col2, col3 = st.columns([1, 6, 1])
-
     with col1:
         st.button("⬅️ Sebelumnya", 
                   on_click=lambda: st.session_state.update(slide_index=st.session_state.slide_index - 1),
@@ -58,10 +57,8 @@ if menu == "Beranda":
 
     current = slides[st.session_state.slide_index]
     st.image(current["path"], caption=current["caption"], use_container_width=True)
-
     st.markdown(f"<p style='text-align:center; color:gray;'>Slide {st.session_state.slide_index + 1} dari {len(slides)}</p>", unsafe_allow_html=True)
 
-    # Deskripsi Isi Halaman
     st.markdown("""
     <hr>
     <div style='font-size:16px; text-align:justify'>
@@ -80,8 +77,6 @@ if menu == "Beranda":
     </div>
     """, unsafe_allow_html=True)
 
-    
-    # Daftar Kelompok
     st.markdown("### 👨‍🔬 Pembuat Aplikasi - Kelompok 3")
     st.markdown("""
     **Anggota:**
@@ -91,17 +86,11 @@ if menu == "Beranda":
     4. Naura Amalia Shaliha          - 2460461
     5. Rizava Apriza                 - 2460503
     """)
-
-    # Footer
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center;'>© 2025 POLITEKNIK AKA BOGOR - All rights reserved.</p>", unsafe_allow_html=True)
 
-# ===== DASAR TEORI =====
-
-
 # ===== KALKULATOR KETIDAKPASTIAN =====
 elif menu == "Kalkulator Ketidakpastian":
-    # Header & Deskripsi Menarik
     st.markdown("""
     <div style='text-align: center; padding: 20px 0;'>
         <h1 style='color: #ff8f00;'>Kalkulator <span style='color:#000000;'>Ketidakpastian 📊 </span>!</h1>
@@ -118,13 +107,11 @@ elif menu == "Kalkulator Ketidakpastian":
     - Grafik scatter + Regresi linier (slope, intersep, R)
     """, unsafe_allow_html=True)
 
-    # Input
     data_input = st.text_area("📥 Masukkan data pengukuran (pisahkan dengan koma)", "10.1, 10.3, 10.2, 10.4, 10.2")
     resolusi = st.number_input("📏 Masukkan nilai resolusi alat ukur", value=0.01, step=0.001)
 
     if st.button("Hitung Ketidakpastian"):
         try:
-            # Proses data
             data = np.array([float(x.strip()) for x in data_input.split(",") if x.strip() != ""])
             n = len(data)
 
@@ -138,7 +125,6 @@ elif menu == "Kalkulator Ketidakpastian":
                 uc = np.sqrt(ua**2 + ub**2)
                 persen = (uc / rata2) * 100
 
-                # Output
                 st.markdown("---")
                 st.subheader("📈 Hasil Perhitungan:")
                 st.success(f"Rata-rata (x̄): {rata2:.4f}")
@@ -149,7 +135,6 @@ elif menu == "Kalkulator Ketidakpastian":
                 st.markdown(f"### ✅ Hasil Akhir: **{rata2:.4f} ± {uc:.4f}**")
                 st.markdown(f"📌 Persentase ketidakpastian terhadap rata-rata: **{persen:.2f}%**")
 
-                # Interpretasi
                 if persen < 1:
                     st.success("🎯 Akurasi tinggi (ketidakpastian < 1%)")
                 elif persen < 5:
@@ -157,17 +142,10 @@ elif menu == "Kalkulator Ketidakpastian":
                 else:
                     st.warning("⚠️ Akurasi rendah (ketidakpastian > 5%). Perlu dicek ulang alat/data.")
 
-                # ============================
-                # ✨ GRAFIK & REGRESI LINEAR
-                # ============================
-                import matplotlib.pyplot as plt
-                from scipy.stats import linregress
-
-                x = np.arange(1, n + 1)  # Titik ke-n
+                # Grafik Regresi
+                x = np.arange(1, n + 1)
                 y = data
-
-                # Linear regression
-                slope, intercept, r_value, p_value, std_err = linregress(x, y)
+                slope, intercept, r_value, _, _ = linregress(x, y)
                 reg_line = slope * x + intercept
 
                 fig, ax = plt.subplots()
@@ -179,68 +157,21 @@ elif menu == "Kalkulator Ketidakpastian":
                 ax.legend()
                 st.pyplot(fig)
 
-                st.markdown("---")
                 st.subheader("📊 Regresi Linier:")
-                st.info(f"Slope (kemiringan): **{slope:.4f}**")
+                st.info(f"Slope: **{slope:.4f}**")
                 st.info(f"Intercept: **{intercept:.4f}**")
                 st.success(f"Koefisien Korelasi R: **{r_value:.4f}**")
                 st.success(f"R² (R-squared): **{r_value**2:.4f}**")
 
-        except:
+        except Exception as e:
             st.error("❌ Format input tidak valid. Pastikan hanya angka dan dipisahkan koma.")
 
-# ======================================================
-# 7. GRAFIK & REGRESI
-# ======================================================
-elif menu == "📉 Grafik & Regresi":
-    st.title("📉 Grafik Pengukuran & Regresi Linier")
-
-    st.markdown("""
-    Masukkan data pengukuran untuk melihat visualisasi grafik scatter dan hasil analisis regresi linier:
-    
-    - Menampilkan **hubungan antara urutan pengukuran dan nilai**
-    - Dapatkan informasi: **Slope, Intercept, Koefisien Korelasi (R), dan R²**
-    """, unsafe_allow_html=True)
-
-    data_input = st.text_area("📥 Masukkan data pengukuran (pisahkan dengan koma)", "10.1, 10.3, 10.2, 10.4, 10.2")
-
-    if st.button("🔍 Tampilkan Grafik"):
-        try:
-            data = np.array([float(x.strip()) for x in data_input.split(",") if x.strip() != ""])
-            n = len(data)
-
-            if n < 2:
-                st.error("❗ Minimal 2 data diperlukan untuk regresi.")
-            else:
-                import matplotlib.pyplot as plt
-                from scipy.stats import linregress
-
-                x = np.arange(1, n + 1)
-                y = data
-
-                slope, intercept, r_value, p_value, std_err = linregress(x, y)
-                reg_line = slope * x + intercept
-
-                fig, ax = plt.subplots()
-                ax.scatter(x, y, label="Data", color="orange")
-                ax.plot(x, reg_line, color="blue", label=f"y = {slope:.2f}x + {intercept:.2f}")
-                ax.set_xlabel("Pengukuran ke-")
-                ax.set_ylabel("Nilai")
-                ax.set_title("Grafik Regresi Linier")
-
-if st.button("Hitung Ketidakpastian"):
-    try:
-        data = np.array([...])
-        ...
-    except:
-        st.error("❌ Format input tidak valid. Pastikan hanya angka dan dipisahkan koma.")
-        
 # ===== CARA PERHITUNGAN MANUAL =====
 elif menu == "Cara Perhitungan Manual":
-    # Header & Deskripsi Menarik
     st.markdown("""
     <div style='text-align: center; padding: 20px 0;'>
         <h1 style='color: #ff8f00;'>Perhitungan cara <span style='color:#000000;'>Manual 📝</span>!</h1>
         <h5 style='font-weight: normal;'>Berhitung dengan <i>manual </i>atau dengan menggunakan <i>kalkulator scientific</i></h5>
     </div>
     """, unsafe_allow_html=True)
+
