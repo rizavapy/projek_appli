@@ -10,27 +10,31 @@ def add_background_from_url():
         f"""
         <style>
         .stApp {{
-            background-image: url("https://id.pinterest.com/pin/77546424822722002/https://id.pinterest.com/pin/77546424822722002/");
+            background-image: url("https://i.pinimg.com/originals/e3/4c/53/e34c53e857fe80c47c1fdf0d50dc0615.jpg");
             background-attachment: fixed;
             background-size: cover;
+            background-position: center;
+        }}
+
+        /* Ubah warna sidebar */
+        section[data-testid="stSidebar"] > div:first-child {{
+            background-color: #007bff;  /* Biru */
+            color: white;
+        }}
+
+        /* Ubah warna teks navigasi sidebar */
+        div[data-testid="stSidebar"] label {{
+            color: white !important;
+        }}
+
+        /* Hover & selected menu item */
+        div[data-testid="stSidebar"] .css-1v3fvcr {{
+            color: white !important;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
-    
-add_background_from_url()
-
-# Sidebar Navigation
-menu = st.sidebar.radio("📂 Navigasi", [
-    "Beranda",
-    "Dasar Teori",
-    "Kalkulator Ketidakpastian",
-    "Cara Perhitungan Manual",
-    "Faktor Kesalahan",
-    "Contoh Soal dan Pembahasan"
-])
-
 
 # === BERANDA ===
 if menu == "Beranda":
