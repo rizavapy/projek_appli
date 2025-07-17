@@ -4,16 +4,6 @@ import streamlit as st
 
 st.set_page_config(page_title="UncertaintyCalc", layout="wide")
 
-# Sidebar Navigation
-menu = st.sidebar.radio("📂 Navigasi", [
-    "Beranda",
-    "Dasar Teori",
-    "Kalkulator Ketidakpastian",
-    "Cara Perhitungan Manual",
-    "Faktor Kesalahan",
-    "Contoh Soal dan Pembahasan"
-])
-
 # ===== BACKGROUND =====
 def add_background_from_url():
     st.markdown(
@@ -30,6 +20,18 @@ def add_background_from_url():
     )
     
 add_background_from_url()
+
+# Sidebar Navigation
+menu = st.sidebar.radio("📂 Navigasi", [
+    "Beranda",
+    "Dasar Teori",
+    "Kalkulator Ketidakpastian",
+    "Cara Perhitungan Manual",
+    "Faktor Kesalahan",
+    "Contoh Soal dan Pembahasan"
+])
+
+
 # === BERANDA ===
 if menu == "Beranda":
     # Header & Deskripsi Menarik
