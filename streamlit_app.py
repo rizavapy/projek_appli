@@ -228,7 +228,13 @@ elif menu == "📉 Grafik & Regresi":
                 ax.set_ylabel("Nilai")
                 ax.set_title("Grafik Regresi Linier")
 
-
+if st.button("Hitung Ketidakpastian"):
+    try:
+        data = np.array([...])
+        ...
+    except:
+        st.error("❌ Format input tidak valid. Pastikan hanya angka dan dipisahkan koma.")
+        
 # ===== CARA PERHITUNGAN MANUAL =====
 elif menu == "Cara Perhitungan Manual":
     # Header & Deskripsi Menarik
