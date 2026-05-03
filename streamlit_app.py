@@ -18,7 +18,7 @@ st.components.v1.html(html_content, height=4000, scrolling=True)
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cecilia Snack × INDI 4.0</title>
+<title>Cecilia Snack and INDI 4.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
