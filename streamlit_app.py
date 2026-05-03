@@ -1,3 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cecilia Snack - Proyek Solusi QR Label</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FDF6EC;
+    --warm-brown: #5C3D1E;
+    --orange: #E8722A;
+    --orange-light: #F2A35A;
+    --gold: #C9963A;
+    --green: #3A6B35;
+    --green-light: #5A9E52;
+    --red: #C0392B;
+    --dark: #1A0F05;
+    --text-mid: #4A3020;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1a0f05;
+    color: var(--cream);
+    overflow-x: hidden;
+  }
+
+  /* NAV TABS */
+  .tabs {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    background: rgba(28, 15, 5, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,150,58,0.3);
+    padding: 0 2rem;
+  }
+  .tab-btn {
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    color: rgba(253,246,236,0.5);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  .page { display: none; padding-top: 60px; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ===================== PAGE 1: POSTER PAMERAN ===================== */
+  #poster {
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .poster-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .poster-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--green);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .poster-title-block {
+    margin-bottom: 2rem;
+  }
+  .poster-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--orange);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .poster-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--warm-brown);
+  }
+  .poster-headline span {
+    color: var(--orange);
+    font-style: italic;
+  }
+  .poster-sub {
+    font-size: 1.05rem;
+    color: var(--text-mid);
+    margin-top: 1rem;
+    line-height: 1.6;
+    max-width: 560px;
+  }
+
+  .poster-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--orange), var(--gold));
+    margin: 1.5rem 0;
+    border-radius: 2px;
+  }
+
+  /* Problem-Solution Block */
+  .problem-solution {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  .ps-box {
+    padding: 1.5rem;
+    border-radius: 12px;
+    position: relative;
+  }
+  .ps-box.problem {
+    background: #FDE8E8;
+    border-left: 4px solid var(--red);
+  }
+  .ps-box.solution {
+    background: #E8F5E8;
+    border-left: 4px solid var(--green);
+  }
+  .ps-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .ps-box.problem .ps-label { color: var(--red); }
+  .ps-box.solution .ps-label { color: var(--green); }
+  .ps-items { list-style: none; }
+  .ps-items li {
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    line-height: 1.4;
+  }
+  .ps-items li::before { flex-shrink: 0; margin-top: 2px; }
+  .ps-box.problem .ps-items li::before { content: "✗"; color: var(--red); font-weight: 700; }
+  .ps-box.solution .ps-items li::before { content: "✓"; color: var(--green); font-weight: 700; }
+
+  /* QR Mockup Section */
+  .qr-section {
+    background: var(--warm-brown);
+    color: var(--cream);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .qr-box {
+    width: 120px;
+    height: 120px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex-shrink: 0;
+  }
+  .qr-pattern {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1.5px;
+    width: 80px;
+    height: 80px;
+  }
+  .qr-cell {
+    background: #000;
+    border-radius: 0.5px;
+  }
+  .qr-cell.white { background: white; }
+  .qr-label-text {
+    font-size: 0.55rem;
+    color: #333;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .qr-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: var(--gold);
+  }
+  .qr-info p {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: rgba(253,246,236,0.8);
+    margin-bottom: 1rem;
+  }
+  .qr-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .qr-tag {
+    background: rgba(201,150,58,0.2);
+    border: 1px solid rgba(201,150,58,0.4);
+    color: var(--gold);
+    padding: 0.3rem 0.8rem;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  /* Info Flow */
+  .info-flow {
+    margin: 2rem 0;
+  }
+  .info-flow h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--warm-brown);
+    margin-bottom: 1rem;
+  }
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
     flex-wrap: wrap;
     gap: 0.5rem;
   }
@@ -591,127 +853,4 @@
 
 <!-- TABS -->
 <nav class="tabs">
-  <button class="tab-btn active" onclick="showPage('poster', this)">📋 Poster Pameran</button>
-  <button class="tab-btn" onclick="showPage('kemasan', this)">📦 Mockup Kemasan</button>
-  <button class="tab-btn" onclick="showPage('digital', this)">📱 Konsep Digital</button>
-</nav>
-
-<!-- ===================== PAGE 1: POSTER ===================== -->
-<div id="poster" class="page active">
-  <div class="poster-inner">
-    <div class="bg-deco bg-deco-1"></div>
-    <div class="bg-deco bg-deco-2"></div>
-
-    <div class="poster-badge">🏆 Proyek Solusi INDI 4.0</div>
-
-    <div class="poster-title-block">
-      <p class="poster-eyebrow">Transformasi Digital UMKM</p>
-      <h1 class="poster-headline">Digitalisasi Label<br><span>QR Code</span> pada<br>Kemasan Produk</h1>
-      <p class="poster-sub">
-        Solusi berbasis teknologi untuk meningkatkan identitas produk, transparansi informasi, 
-        dan daya saing UMKM <strong>Cecilia Snack</strong> menuju era Industri 4.0.
-      </p>
-    </div>
-
-    <div class="poster-divider"></div>
-
-    <!-- Problem vs Solution -->
-    <div class="problem-solution">
-      <div class="ps-box problem">
-        <div class="ps-label">⚠ Kondisi Saat Ini</div>
-        <ul class="ps-items">
-          <li>Tidak ada barcode/QR di kemasan</li>
-          <li>Harga ditempel manual, mudah lepas</li>
-          <li>Info produk tidak tersedia digital</li>
-          <li>Stok tidak bisa dilacak otomatis</li>
-          <li>Kemasan tidak profesional</li>
-        </ul>
-      </div>
-      <div class="ps-box solution">
-        <div class="ps-label">✅ Solusi yang Ditawarkan</div>
-        <ul class="ps-items">
-          <li>QR code terintegrasi di setiap kemasan</li>
-          <li>Harga & info produk digital & akurat</li>
-          <li>Halaman produk bisa diakses konsumen</li>
-          <li>Potensi tracking distribusi produk</li>
-          <li>Kemasan lebih rapi & profesional</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- QR Feature Block -->
-    <div class="qr-section">
-      <div class="qr-box">
-        <!-- Decorative QR Pattern -->
-        <div class="qr-pattern">
-          <!-- Row 1 -->
-          <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div>
-          <!-- Row 2 -->
-          <div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell white"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div>
-          <!-- Row 3 -->
-          <div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div>
-          <!-- Row 4 -->
-          <div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell white"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div>
-          <!-- Row 5 -->
-          <div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div>
-          <!-- Row 6 -->
-          <div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div>
-          <!-- Row 7 -->
-          <div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div><div class="qr-cell white"></div><div class="qr-cell"></div>
-        </div>
-        <div class="qr-label-text">SCAN ME</div>
-      </div>
-      <div class="qr-info">
-        <h3>Informasi dalam QR Code</h3>
-        <p>Setiap kemasan Cecilia Snack akan dilengkapi QR Code unik yang dapat di-scan konsumen untuk mengakses informasi produk secara langsung dan real-time.</p>
-        <div class="qr-features">
-          <span class="qr-tag">Nama Produk</span>
-          <span class="qr-tag">Harga</span>
-          <span class="qr-tag">Berat Bersih</span>
-          <span class="qr-tag">Tgl Kadaluarsa</span>
-          <span class="qr-tag">Kontak UMKM</span>
-          <span class="qr-tag">Varian Rasa</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Flow -->
-    <div class="info-flow">
-      <h3>Alur Sistem QR Label</h3>
-      <div class="flow-steps">
-        <div class="flow-step">
-          <div class="step-num">1</div>
-          <div class="step-icon">🏭</div>
-          <div class="step-title">Produksi</div>
-          <div class="step-desc">Data produk diinput ke sistem (nama, harga, expired)</div>
-        </div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">
-          <div class="step-num">2</div>
-          <div class="step-icon">🏷️</div>
-          <div class="step-title">Generate QR</div>
-          <div class="step-desc">QR Code dibuat otomatis & dicetak pada label kemasan</div>
-        </div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">
-          <div class="step-num">3</div>
-          <div class="step-icon">📦</div>
-          <div class="step-title">Pengemasan</div>
-          <div class="step-desc">Label QR ditempel pada kemasan produk jadi</div>
-        </div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">
-          <div class="step-num">4</div>
-          <div class="step-icon">📱</div>
-          <div class="step-title">Konsumen Scan</div>
-          <div class="step-desc">Konsumen scan → lihat info lengkap produk di HP</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- INDI Score Visualization -->
-    <div class="indi-section">
-      <h3>Peningkatan Skor Indikator INDI 4.0</h3>
-      <div class="indi-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#E74C3C"></div> Sebelum</div>
-        <div class="legend-item"><div 
+  <button class="tab-btn active" onclick="showPa
