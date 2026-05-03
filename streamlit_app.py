@@ -1028,7 +1028,7 @@ function ProductPage({ product, onBack }) {
           fontWeight: 800, fontSize: 15, textDecoration: "none",
           marginBottom: 10, boxShadow: "0 4px 20px rgba(37,211,102,0.4)",
         }}>
-          💬 Pesan via WhatsApp
+          Pesan via WhatsApp
         </a>
       </div>
     </div>
