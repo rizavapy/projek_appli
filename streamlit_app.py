@@ -970,7 +970,7 @@ function ProductPage({ product, onBack }) {
         {/* Badges */}
         <div style={{ display: "flex", gap: 8, marginTop: 16, marginBottom: 12 }}>
           {product.halal && (
-            <span style={{ background: "#1A5C2A", color: "white", fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 4 }}>✓ HALAL</span>
+            <span style={{ background: "#1A5C2A", color: "white", fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 4 }}> HALAL</span>
           )}
           <span style={{ background: "#3E2000", color: "white", fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 4 }}>PIRT</span>
           <span style={{ background: "#E8650A", color: "white", fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 4 }}>UMKM</span>
