@@ -752,21 +752,6 @@ body { font-family: 'DM Sans', sans-serif; background: #FFF8EE; color: #3E2000; 
 
 st.components.v1.html(html_content, height=5200, scrolling=True)
 
-import streamlit as st
-import qrcode
-import barcode
-from barcode.writer import ImageWriter
-from PIL import Image, ImageDraw, ImageFont
-import io
-import base64
-import urllib.parse
-
-st.set_page_config(
-    page_title="Cecilia Snack — QR & Barcode Generator",
-    page_icon="🍟",
-    layout="wide"
-)
-
 # ─── CSS ───────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
