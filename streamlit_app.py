@@ -886,7 +886,10 @@ div.stButton > button {
 """, unsafe_allow_html=True)
 
 
+  
+
 # ─── DATA PRODUK ──────────────────────────────────────────────────────────────
+
 PRODUCTS = [
     {
         "id": "CS001", "name": "Keripik Singkong", "weight": "250g",
@@ -929,8 +932,6 @@ PRODUCTS = [
         "bg_color": (232, 245, 233),
     },
 ]
-
-
 # ─── HELPER FUNCTIONS ─────────────────────────────────────────────────────────
 def generate_qr(url: str, box_size: int = 8) -> Image.Image:
     qr = qrcode.QRCode(
@@ -1038,7 +1039,8 @@ def build_product_url(prod: dict) -> str:
 def build_wa_url(prod: dict) -> str:
     msg = f"Halo Cecilia Snack! Saya ingin memesan *{prod['name']}* ({prod['weight']}) — Rp {prod['price']:,}".replace(",", ".")
     return f"https://wa.me/{prod['wa']}?text={urllib.parse.quote(msg)}"
-
+    
+    
 
 # ─── HERO ─────────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -1250,7 +1252,7 @@ if st.session_state.tab == "generator":
                 <div style='font-size:13px;color:#7A5C3A;margin-bottom:12px'>{active_prod['desc']}</div>
                 <div style='background:white;border-radius:10px;padding:12px 16px;
                 box-shadow:0 4px 16px rgba(62,32,0,0.10);display:inline-block;'>
-                     <span style='font-size:26px;font-weight:900;color:#3E2000'>
+                  <span style='font-size:26px;font-weight:900;color:#3E2000'>
                     Rp {active_prod['price']:,}
                   </span>
                   {'<span style="font-size:20px;font-weight:700;color:#E8650A;margin-left:12px">-' + str(discount) + '%</span>' if discount > 0 else ""}
@@ -1291,6 +1293,7 @@ if st.session_state.tab == "generator":
         </p>
         </div>
         """, unsafe_allow_html=True)
+            
 
 
 # ══════════════════════════════════════════════════════════════════════════════
