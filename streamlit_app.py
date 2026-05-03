@@ -948,7 +948,7 @@ function ProductPage({ product, onBack }) {
         <button onClick={onBack} style={{
           background: "rgba(255,255,255,0.2)", border: "none", color: "white",
           borderRadius: 8, padding: "6px 12px", cursor: "pointer", fontSize: 14, fontWeight: 700,
-        }}>← Kembali</button>
+        }}> Kembali</button>
         <div>
           <div style={{ fontSize: 18, fontWeight: 900, fontFamily: "Georgia, serif" }}>Cecilia Snack</div>
           <div style={{ fontSize: 11, opacity: 0.8 }}>Halaman Produk Digital</div>
