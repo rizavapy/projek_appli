@@ -41,7 +41,7 @@ st.components.v1.html(html_content, height=4000, scrolling=True)
   .hero {
     <style>
 .hero {
-  background: linear-gradient(135deg, #3E2000 0%, #6B3500 60%, #E8650A 100%);
+  background: linear-gradient(135 deg, #3E2000 0%, #6B3500 60%, #E8650A 100%);
 }
 </style>
   }
