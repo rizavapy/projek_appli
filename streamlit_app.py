@@ -39,10 +39,11 @@ st.components.v1.html(html_content, height=4000, scrolling=True)
   }
 
   .hero {
-    background: linear-gradient(135deg, var(--brown) 0%, #6B3500 60%, var(--orange) 100%);
-    color: white;
-    padding: 60px 20px;
-    text-align: center;
+    <style>
+.hero {
+  background: linear-gradient(135deg, #3E2000 0%, #6B3500 60%, #E8650A 100%);
+}
+</style>
   }
 
   .hero h1 {
