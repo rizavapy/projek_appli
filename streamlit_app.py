@@ -751,5 +751,3 @@ body { font-family: 'DM Sans', sans-serif; background: #FFF8EE; color: #3E2000; 
 </html>"""
 
 st.components.v1.html(html_content, height=5200, scrolling=True)
-
-}
