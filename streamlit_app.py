@@ -22,7 +22,7 @@ st.components.v1.html(html_content, height=4000, scrolling=True)
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Cecilia Snack × INDI 4.0</title>
+<title>Cecilia Snack and INDI 4.0</title>
 
 <style>
   :root {
