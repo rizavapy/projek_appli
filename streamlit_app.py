@@ -977,7 +977,7 @@ function ProductPage({ product, onBack }) {
         </div>
 
         <h1 style={{ fontFamily: "Georgia, serif", fontSize: 28, fontWeight: 900, color: "#3E2000", margin: "0 0 4px" }}>{product.name}</h1>
-        <div style={{ color: "#E8650A", fontSize: 12, fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>{product.brand} • {product.weight}</div>
+        <div style={{ color: "#E8650A", fontSize: 12, fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>{product.brand} {product.weight}</div>
         <p style={{ color: "#7A5C3A", fontSize: 14, lineHeight: 1.7, marginBottom: 16 }}>{product.desc}</p>
 
         {/* Price */}
